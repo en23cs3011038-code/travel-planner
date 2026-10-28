@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<section class="hero"><h1>Create your account</h1><p>Save your trips and set your travel preferences.</p></section>
+
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<form class="card form narrow" method="post">
+  <label>Full name
+    <input type="text" name="name" value="{{ request.form.get('name', '') }}" required autofocus>
+  </label>
+  <label>Email
+    <input type="email" name="email" value="{{ request.form.get('email', '') }}" required>
+  </label>
+  <label>Password (min 6 characters)
+    <input type="password" name="password" minlength="6" required>
+  </label>
+  <button type="submit" class="btn">Sign up</button>
+  <p class="hint">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+</form>
+{% endblock %}

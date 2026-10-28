@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>My Profile</h1>
+  <p>{{ user['email'] }} &middot; {{ trip_count }} saved trip{{ 's' if trip_count != 1 }}</p>
+</section>
+
+<form class="card form" method="post">
+  <h2 class="form-title">Travel preferences</h2>
+  <p class="hint">These values are pre-filled every time you plan a new trip.</p>
+  <div class="grid">
+    <label>Full name
+      <input type="text" name="name" value="{{ user['name'] }}" required>
+    </label>
+
+    <label>How many days do you usually stay? (1-{{ max_days }})
+      <input type="number" name="default_days" min="1" max="{{ max_days }}" value="{{ user['default_days'] }}" required>
+    </label>
+
+    <label>Number of travelers
+      <input type="number" name="default_travelers" min="1" max="20" value="{{ user['default_travelers'] }}" required>
+    </label>
+
+    <label>Preferred travel style
+      <select name="default_style">
+        <option value="budget" {{ 'selected' if user['default_style'] == 'budget' }}>Budget</option>
+        <option value="standard" {{ 'selected' if user['default_style'] == 'standard' }}>Standard</option>
+        <option value="luxury" {{ 'selected' if user['default_style'] == 'luxury' }}>Luxury</option>
+      </select>
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>Favourite interests</legend>
+    <div class="chips">
+      {% for i in interests %}
+      <label class="chip"><input type="checkbox" name="default_interests" value="{{ i }}" {{ 'checked' if i in selected }}> <span>{{ i }}</span></label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn">Save preferences</button>
+  <a class="btn secondary" href="{{ url_for('index') }}">Plan a trip</a>
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Trips{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>My Trips</h1>
+  <p>All itineraries you created while logged in.</p>
+</section>
+
+<div class="card">
+  {% if trips %}
+  <table>
+    <thead>
+      <tr><th>Destination</th><th>Days</th><th>People</th><th>Style</th><th>Budget</th><th>Estimate</th><th>Created</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for t in trips %}
+      <tr>
+        <td><a href="{{ url_for('view_trip', trip_id=t['id']) }}">{{ t['destination'] }}</a></td>
+        <td>{{ t['days'] }}</td>
+        <td>{{ t['travelers'] }}</td>
+        <td>{{ t['style']|capitalize }}</td>
+        <td>&#8377;{{ '{:,}'.format(t['budget']) }}</td>
+        <td>&#8377;{{ '{:,}'.format(t['total_cost']) }}</td>
+        <td>{{ t['created_at'] }}</td>
+        <td>
+          <form method="post" action="{{ url_for('delete_trip', trip_id=t['id']) }}"
+                onsubmit="return confirm('Delete this trip?');">
+            <button class="link-btn" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No saved trips yet. <a href="{{ url_for('index') }}">Plan your first trip</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

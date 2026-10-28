@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ dest_name }} Itinerary{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>{{ days }}-day trip to {{ dest_name }}</h1>
+  <p>{{ travelers }} traveler{{ 's' if travelers > 1 }} &middot; {{ style|capitalize }} style &middot; Interests: {{ interests|join(', ') }}</p>
+</section>
+
+<div class="summary card {{ 'ok' if result.within_budget else 'over' }}">
+  <div>
+    <strong>Estimated total: &#8377;{{ '{:,}'.format(result.total) }}</strong>
+    <span>Your budget: &#8377;{{ '{:,}'.format(budget) }}</span>
+  </div>
+  <div class="status">
+    {% if result.within_budget %}
+      ✅ Within budget &mdash; &#8377;{{ '{:,}'.format(result.difference) }} left over
+    {% else %}
+      ⚠ Over budget by &#8377;{{ '{:,}'.format(result.difference) }}. Try fewer days or a cheaper style.
+    {% endif %}
+  </div>
+  <ul class="breakdown">
+    <li>Activities and entry fees: &#8377;{{ '{:,}'.format(result.activity_cost) }}</li>
+    <li>Stay + food + local travel: &#8377;{{ '{:,}'.format(result.stay_food_cost) }}</li>
+  </ul>
+  <small class="note">All costs are rough estimates in Indian rupees. Real prices vary by country and season.</small>
+</div>
+
+{% for day in result.plan %}
+<section class="day card">
+  <h2>Day {{ day.day }}</h2>
+  <div class="slots">
+    {% for s in day.slots %}
+    <div class="slot {{ s.slot }}">
+      <span class="time">{{ s.slot|capitalize }}</span>
+      {% if s.place %}
+        <h3>{{ s.place.name }}</h3>
+        <p>{{ s.place.description }}</p>
+        <div class="meta">
+          <span class="tag">{{ s.place.category }}</span>
+          <span>{% if s.place.cost == 0 %}Free{% else %}{{ '~' if s.place.estimated }}&#8377;{{ s.place.cost }} / person{% endif %}</span>
+        </div>
+      {% else %}
+        <h3>Free time</h3>
+        <p>No more places found nearby. Relax or explore on your own.</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+<p class="actions">
+  <a class="btn" href="{{ url_for('index') }}">New plan</a>
+  <button class="btn secondary" onclick="window.print()">Print / Save as PDF</button>
+  {% if user and trip_id %}
+    <a class="btn secondary" href="{{ url_for('history') }}">My Trips</a>
+  {% elif not user %}
+    <a class="btn secondary" href="{{ url_for('register') }}">Sign up to save trips</a>
+  {% endif %}
+</p>
+{% endblock %}

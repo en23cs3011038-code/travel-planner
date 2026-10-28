@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Plan Your Trip{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Plan your perfect trip</h1>
+  <p>Type any city in the world, tell us how long you will stay &mdash; get a day-by-day itinerary instantly.</p>
+</section>
+
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<form class="card form" method="post" action="{{ url_for('plan') }}">
+  <div class="grid">
+    <label>Destination (any city in the world)
+      <input type="text" name="destination" list="cities" value="{{ values.destination }}"
+             placeholder="e.g. Paris, Tokyo, New York, Goa" autocomplete="off" required>
+      <datalist id="cities">
+        {% for c in curated %}<option value="{{ c }}">{% endfor %}
+        <option value="Paris"><option value="London"><option value="Tokyo">
+        <option value="Dubai"><option value="Singapore"><option value="New York">
+        <option value="Rome"><option value="Bangkok"><option value="Bali">
+      </datalist>
+    </label>
+
+    <label>Number of days (1-{{ max_days }})
+      <input type="number" name="days" min="1" max="{{ max_days }}" value="{{ values.days }}" required>
+    </label>
+
+    <label>Number of travelers
+      <input type="number" name="travelers" min="1" max="20" value="{{ values.travelers }}" required>
+    </label>
+
+    <label>Total budget (&#8377;)
+      <input type="number" name="budget" min="1000" step="500" value="{{ values.budget }}" required>
+    </label>
+
+    <label>Travel style
+      <select name="style">
+        <option value="budget" {{ 'selected' if values.style == 'budget' }}>Budget (hostel, simple food)</option>
+        <option value="standard" {{ 'selected' if values.style == 'standard' }}>Standard (3-star hotel)</option>
+        <option value="luxury" {{ 'selected' if values.style == 'luxury' }}>Luxury (premium hotel)</option>
+      </select>
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>Your interests</legend>
+    <div class="chips">
+      {% for i in interests %}
+      <label class="chip"><input type="checkbox" name="interests" value="{{ i }}" {{ 'checked' if i in values.interests }}> <span>{{ i }}</span></label>
+      {% endfor %}
+    </div>
+    <small>If you select nothing, all categories are included.</small>
+  </fieldset>
+
+  <button type="submit" class="btn">Create itinerary</button>
+  {% if not user %}
+  <p class="hint"><a href="{{ url_for('register') }}">Create an account</a> to save your trips and set default preferences.</p>
+  {% endif %}
+</form>
+{% endblock %}

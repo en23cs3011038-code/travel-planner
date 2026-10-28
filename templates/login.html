@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section class="hero"><h1>Welcome back</h1><p>Log in to see your saved trips.</p></section>
+
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<form class="card form narrow" method="post">
+  <input type="hidden" name="next" value="{{ request.values.get('next', '') }}">
+  <label>Email
+    <input type="email" name="email" required autofocus>
+  </label>
+  <label>Password
+    <input type="password" name="password" required>
+  </label>
+  <button type="submit" class="btn">Log in</button>
+  <p class="hint">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+</form>
+{% endblock %}
